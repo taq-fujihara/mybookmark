@@ -82,26 +82,22 @@ export default {
       });
     }
 
-    return (
-      bookmarksRef
-        // .orderBy("createdAt", "desc")
-        .onSnapshot(snapshot => {
-          const bookmarks: Array<Bookmark> = [];
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            bookmarks.push({
-              id: doc.id,
-              userId: userId,
-              title: data.title,
-              url: data.url,
-              tags: getTagArray(data.tags).sort(),
-              description: data.description,
-              createdAt: data.createdAt.toDate()
-            });
-          });
-          callback(bookmarks);
-        })
-    );
+    return bookmarksRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
+      const bookmarks: Array<Bookmark> = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        bookmarks.push({
+          id: doc.id,
+          userId: userId,
+          title: data.title,
+          url: data.url,
+          tags: getTagArray(data.tags).sort(),
+          description: data.description,
+          createdAt: data.createdAt.toDate()
+        });
+      });
+      callback(bookmarks);
+    });
   },
   async addBookmark(bookmark: Bookmark): Promise<void> {
     try {
