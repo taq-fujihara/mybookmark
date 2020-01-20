@@ -13,7 +13,8 @@ export default new Vuex.Store({
       id: "",
       email: ""
     },
-    bookmarks: [] as Array<Bookmark>
+    bookmarks: [] as Array<Bookmark>,
+    bookmarksAllFetched: false
   },
   mutations: {
     setUser(state, user) {
@@ -29,17 +30,20 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async fetchBookmarks({ commit, state }, filter) {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-      unsubscribe = repository.onBookmarksUpdated(
+    async fetchBookmarks({ commit, state }, { filter, pagination }) {
+      const bookmarks = await repository.getBookmarks(
         state.user.id,
         filter,
-        bookmarks => {
-          commit("setBookmarks", bookmarks);
-        }
+        pagination
       );
+
+      if (pagination) {
+        state.bookmarks = [...state.bookmarks, ...bookmarks];
+      } else {
+        state.bookmarks = bookmarks;
+      }
+
+      state.bookmarksAllFetched = bookmarks.length === 0;
     }
   },
   modules: {}

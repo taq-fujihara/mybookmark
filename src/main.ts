@@ -19,8 +19,7 @@ auth().onAuthStateChanged(user => {
         renderApp();
       })
       .catch(e => {
-        // tslint:disable-next-line:no-console
-        console.error(e);
+        alert("Error!");
       });
   } else {
     store.commit("setUser", { id: user.uid, email: user.email });
