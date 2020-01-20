@@ -14,7 +14,7 @@
           </span>
         </span>
       </div>
-      <div>
+      <div class="bookmark-link">
         <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
           {{ bookmark.url }}
         </a>
@@ -76,6 +76,12 @@ $spacing-large: 32px;
 
   .tag:not(:first-child) {
     margin-left: $spacing-small;
+  }
+
+  .bookmark-link {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .description {
