@@ -21,8 +21,8 @@
         @tagClick="addFilterTag"
       />
     </div>
-    <div v-if="!$store.state.bookmarksAllFetched">
-      <button class="button" @click="fetchMore">もっと</button>
+    <div class="show-more" v-if="!$store.state.bookmarksAllFetched">
+      <a @click="fetchMore">もっと見る</a>
     </div>
   </div>
 </template>
@@ -91,5 +91,9 @@ export default class Home extends Vue {
 <style lang="scss" scoped>
 .tag-list {
   margin-left: var(--spacing-small);
+}
+
+.show-more {
+  margin-top: var(--spacing-large);
 }
 </style>

@@ -3,16 +3,16 @@
     <div class="bookmark-info">
       <div class="bookmark-title">
         {{ bookmark.title }}
-        <span class="tag-list">
-          <span
-            class="tag tag-list__tag clickable"
-            :class="{ 'is-primary': highlightedTags.includes(tag) }"
-            v-for="tag in bookmark.tags"
-            :key="tag"
-            @click="$emit('tagClick', tag)"
-          >
-            {{ tag }}
-          </span>
+      </div>
+      <div class="tag-list">
+        <span
+          class="tag tag-list__tag clickable"
+          :class="{ 'is-primary': highlightedTags.includes(tag) }"
+          v-for="tag in bookmark.tags"
+          :key="tag"
+          @click="$emit('tagClick', tag)"
+        >
+          {{ tag }}
         </span>
       </div>
       <div class="bookmark-link">
@@ -70,10 +70,6 @@ export default class BookmarkElement extends Vue {
   div {
     margin-top: var(--spacing-small);
   }
-}
-
-.tag-list {
-  margin-left: var(--spacing-medium);
 }
 
 .bookmark-link {
