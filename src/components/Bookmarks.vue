@@ -7,6 +7,7 @@
     >
       <BookmarkElement
         :bookmark="bookmark"
+        :highlightedTags="highlightedTags"
         @tagClick="$emit('tagClick', $event)"
         @edit="$router.push(`/edit/${$event.id}`)"
         @delete="deleteBookmark($event)"
@@ -32,6 +33,9 @@ export default class Bookmarks extends Vue {
 
   @Prop({ default: () => [] })
   bookmarks!: Array<Bookmark>;
+
+  @Prop({ default: () => [] })
+  highlightedTags!: Array<string>;
 
   async deleteBookmark(bookmark: Bookmark): Promise<void> {
     await this.repository.deleteBookmark(bookmark);

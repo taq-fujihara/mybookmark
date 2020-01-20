@@ -5,7 +5,8 @@
         {{ bookmark.title }}
         <span class="bookmark-tags">
           <span
-            class="tag is-light"
+            class="tag"
+            :class="{ 'is-primary': highlightedTags.includes(tag) }"
             v-for="tag in bookmark.tags"
             :key="tag"
             @click="$emit('tagClick', tag)"
@@ -43,7 +44,9 @@ import Bookmark from "@/models/Bookmark";
 
 @Component
 export default class BookmarkElement extends Vue {
-  @Prop() private bookmark!: Bookmark;
+  @Prop({ required: true }) bookmark!: Bookmark;
+
+  @Prop({ default: () => [] }) highlightedTags!: Array<string>;
 
   private get createdAt(): String {
     const y = this.bookmark.createdAt.getFullYear();

@@ -11,7 +11,11 @@
       </span>
     </span>
     <div>
-      <Bookmarks :bookmarks="bookmarks" @tagClick="addFilterTag" />
+      <Bookmarks
+        :bookmarks="bookmarks"
+        :highlightedTags="filterTags"
+        @tagClick="addFilterTag"
+      />
     </div>
   </div>
 </template>
