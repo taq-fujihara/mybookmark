@@ -79,22 +79,29 @@ export default {
       });
     }
 
-    return bookmarksRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
-      const bookmarks: Array<Bookmark> = [];
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        bookmarks.push({
-          id: doc.id,
-          userId: userId,
-          title: data.title,
-          url: data.url,
-          tags: getTagArray(data.tags).sort(),
-          description: data.description,
-          createdAt: data.createdAt.toDate()
+    return bookmarksRef /*.orderBy("createdAt", "desc")*/
+      .onSnapshot(snapshot => {
+        const bookmarks: Array<Bookmark> = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          bookmarks.push({
+            id: doc.id,
+            userId: userId,
+            title: data.title,
+            url: data.url,
+            tags: getTagArray(data.tags).sort(),
+            description: data.description,
+            createdAt: data.createdAt.toDate()
+          });
         });
+        // whereで絞り込みをしながらorderByを行った場合、複合インデックスを作成する必要がある。
+        // しかし、複数タグAND条件で絞り込みを行うために、タグは`{ tagA: true, tagB: true }`
+        // の形式で保存している。そうすると複合インデックスを各タグと作成日時でそれぞれ作成しなければ
+        // ならないので、今のところはローカルでソートする。ブックマークが増えて一回で取得する件数
+        // が多くなったときにちゃんと考えないといけない。
+        bookmarks.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        callback(bookmarks);
       });
-      callback(bookmarks);
-    });
   },
   async addBookmark(bookmark: Bookmark): Promise<void> {
     try {
