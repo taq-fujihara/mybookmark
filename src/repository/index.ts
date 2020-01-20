@@ -5,13 +5,10 @@ import BookmarkFilter from "@/models/BookmarksFilter";
 const db = firestore;
 
 function cleanTags(tags: Array<string>): Object {
-  // drop distinct
+  // drop duplicates
   const distinct = Array.from(new Set<string>(tags));
-  const o = new Object();
-  distinct.sort().forEach(tag => {
-    o[tag] = true;
-  });
-  return o;
+  const sorted = distinct.sort().map(tag => [tag, true]);
+  return Object.fromEntries(sorted);
 }
 
 function getTagArray(tagMap: Object): Array<string> {
@@ -117,8 +114,6 @@ export default {
       const docRef = await db
         .collection(`users/${bookmark.userId}/bookmarks`)
         .doc(bookmark.id);
-
-      console.log(docRef);
 
       await docRef.update({
         title: bookmark.title,
