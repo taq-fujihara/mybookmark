@@ -1,0 +1,20 @@
+.tag-list {
+  &__tag:not(:first-of-type) {
+    margin-left: var(--spacing-small);
+  }
+}
+
+.button-list {
+  &__button:not(:first-of-type) {
+    margin-left: var(--spacing-medium);
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.sub-text {
+  font-size: var(--font-size-small);
+  opacity: 0.7;
+}

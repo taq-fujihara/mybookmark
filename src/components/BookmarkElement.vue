@@ -3,9 +3,9 @@
     <div class="bookmark-info">
       <div class="bookmark-title">
         {{ bookmark.title }}
-        <span class="bookmark-tags">
+        <span class="tag-list">
           <span
-            class="tag"
+            class="tag tag-list__tag clickable"
             :class="{ 'is-primary': highlightedTags.includes(tag) }"
             v-for="tag in bookmark.tags"
             :key="tag"
@@ -26,11 +26,17 @@
       <div class="created-at sub-text">
         {{ createdAt }}
       </div>
-      <div class="bookmark-actions">
-        <span class="icon is-small" @click="$emit('edit', bookmark)">
+      <div class="bookmark-actions button-list">
+        <span
+          class="icon is-small button-list__button clickable"
+          @click="$emit('edit', bookmark)"
+        >
           <i class="fas fa-edit"></i>
         </span>
-        <span class="icon is-small" @click="$emit('delete', bookmark)">
+        <span
+          class="icon is-small button-list__button clickable"
+          @click="$emit('delete', bookmark)"
+        >
           <i class="fas fa-trash"></i>
         </span>
       </div>
@@ -60,54 +66,28 @@ export default class BookmarkElement extends Vue {
 </script>
 
 <style lang="scss" scoped>
-$spacing-small: 8px;
-$spacing-large: 32px;
-
 .bookmark {
   div {
-    margin-top: $spacing-small;
+    margin-top: var(--spacing-small);
   }
 }
 
-.bookmark-info {
-  .bookmark-tags {
-    span {
-      cursor: pointer;
-      margin-left: 16px;
-    }
-  }
+.tag-list {
+  margin-left: var(--spacing-medium);
+}
 
-  .tag:not(:first-child) {
-    margin-left: $spacing-small;
-  }
+.bookmark-link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .bookmark-link {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.bookmark-actions {
+  .icon {
+    transition: color 0.2s;
 
-  .description {
-    font-size: small;
-  }
-
-  .created-at {
-    font-size: small;
-    opacity: 0.7;
-  }
-
-  .bookmark-actions {
-    span:not(:first-of-type) {
-      margin-left: 16px;
-    }
-
-    .icon {
-      cursor: pointer;
-      transition: color 0.2s;
-
-      &:not(:hover) {
-        color: #90a4ae;
-      }
+    &:not(:hover) {
+      color: #90a4ae;
     }
   }
 }

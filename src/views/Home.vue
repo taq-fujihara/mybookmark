@@ -4,8 +4,12 @@
     <span class="sub-text" v-if="filterTags.length === 0">
       タグをクリックして絞り込みを追加
     </span>
-    <span class="filter-tags">
-      <span class="tag is-primary" v-for="tag in filterTags" :key="tag">
+    <span class="tag-list">
+      <span
+        class="tag is-primary tag-list__tag"
+        v-for="tag in filterTags"
+        :key="tag"
+      >
         {{ tag }}
         <button class="delete is-small" @click="removeFilterTag(tag)"></button>
       </span>
@@ -75,14 +79,7 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.filter-tags {
-  span {
-    margin-left: 8px;
-  }
-}
-
-.sub-text {
-  font-size: small;
-  opacity: 0.7;
+.tag-list {
+  margin-left: var(--spacing-small);
 }
 </style>
