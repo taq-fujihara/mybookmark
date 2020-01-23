@@ -29,7 +29,7 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button">
+            <a class="button" @click="$emit('logout')">
               Log out
             </a>
           </div>

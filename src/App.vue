@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavBar />
+    <NavBar @logout="signOut" />
     <div class="tabs">
       <ul>
         <li :class="{ 'is-active': currentRoute === 'bookmarks' }">
