@@ -1,19 +1,53 @@
 <template>
   <div class="home">
-    <i class="fas fa-filter"></i>
-    <span class="sub-text" v-if="filter.tags.length === 0">
-      タグをクリックして絞り込みを追加
-    </span>
-    <span class="tag-list">
-      <span
-        class="tag is-primary tag-list__tag"
-        v-for="tag in filter.tags"
-        :key="tag"
-      >
-        {{ tag }}
-        <button class="delete is-small" @click="removeFilterTag(tag)"></button>
+    <div class="filter">
+      <i class="fas fa-filter"></i>
+      <span class="tag-list">
+        <span
+          class="tag is-primary tag-list__tag"
+          v-for="tag in filter.tags"
+          :key="tag"
+        >
+          {{ tag }}
+          <button
+            class="delete is-small"
+            @click="removeFilterTag(tag)"
+          ></button>
+        </span>
       </span>
-    </span>
+      <input
+        class="input is-small filter-tag-input"
+        type="text"
+        v-model="filterTagInput"
+        @keydown.enter="
+          addFilterTag(filterTagInput);
+          filterTagInput = '';
+        "
+        @keydown.space="
+          addFilterTag(filterTagInput);
+          filterTagInput = '';
+        "
+        placeholder="Tag"
+      />
+    </div>
+    <div>
+      <div>
+        <span class="sub-text">
+          Recently Created
+        </span>
+      </div>
+      <div class="tags">
+        <span
+          class="tag is-light clickable"
+          :class="{ 'is-primary': filter.tags.includes(tag) }"
+          v-for="tag in $store.state.tags.recentlyCreated.slice(0, 10)"
+          :key="tag"
+          @click="toggleFilterTag(tag)"
+        >
+          {{ tag }}
+        </span>
+      </div>
+    </div>
     <div>
       <Bookmarks
         :bookmarks="bookmarks"
@@ -21,8 +55,8 @@
         @tagClick="toggleFilterTag"
       />
     </div>
-    <div class="show-more" v-if="!$store.state.bookmarksAllFetched">
-      <a @click="fetchMore">もっと見る</a>
+    <div class="show-more sub-text" v-if="!$store.state.bookmarksAllFetched">
+      <a @click="fetchMore">more...</a>
     </div>
   </div>
 </template>
@@ -55,6 +89,8 @@ export default class Home extends Vue {
 
     return filter;
   }
+
+  filterTagInput = "";
 
   @Watch("filter", { immediate: true })
   async onFilterChange(filter: BookmarkFilter) {
@@ -97,11 +133,21 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.filter {
+  display: flex;
+  align-items: center;
+}
+
 .tag-list {
   margin-left: var(--spacing-small);
 }
 
 .show-more {
   margin-top: var(--spacing-large);
+}
+
+.filter-tag-input {
+  width: 100px;
+  margin-left: var(--spacing-small);
 }
 </style>

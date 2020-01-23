@@ -165,5 +165,19 @@ export default {
     } catch (error) {
       throw new Error(`Failed to delete bookmark: ${bookmark.id}`);
     }
+  },
+  onRecentlyAddTagChange(
+    userId: string,
+    limit: number,
+    callback: (tags: Array<string>) => void
+  ): () => void {
+    return db
+      .collection(`users/${userId}/tags`)
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .onSnapshot(snapshot => {
+        const tags = snapshot.docs.map(docRef => docRef.data().tagName);
+        callback(tags);
+      });
   }
 };

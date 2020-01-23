@@ -6,7 +6,7 @@
       </div>
       <div class="tag-list">
         <span
-          class="tag tag-list__tag clickable"
+          class="tag is-light tag-list__tag clickable"
           :class="{ 'is-primary': highlightedTags.includes(tag) }"
           v-for="tag in bookmark.tags"
           :key="tag"

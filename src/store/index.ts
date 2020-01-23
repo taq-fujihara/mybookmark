@@ -5,22 +5,42 @@ import repository from "@/repository";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+let unsubscribeRecentlyCreatedTag: () => void;
+
+const store = new Vuex.Store({
   state: {
     user: {
       id: "",
       email: ""
     },
-    bookmarks: [] as Array<Bookmark>,
-    bookmarksAllFetched: false
+    bookmarks: new Array<Bookmark>(),
+    bookmarksAllFetched: false,
+    tags: {
+      recentlyCreated: new Array<string>()
+    }
   },
   mutations: {
     setUser(state, user) {
       state.user.id = user.id;
       state.user.email = user.email;
+
+      if (unsubscribeRecentlyCreatedTag) {
+        unsubscribeRecentlyCreatedTag();
+      }
+
+      unsubscribeRecentlyCreatedTag = repository.onRecentlyAddTagChange(
+        user.id,
+        11,
+        tags => {
+          store.commit("setRecentlyCreatedTags", tags);
+        }
+      );
     },
     setBookmarks(state, bookmarks: Array<Bookmark>) {
       state.bookmarks = bookmarks;
+    },
+    setRecentlyCreatedTags(state, tags: Array<string>) {
+      state.tags.recentlyCreated = tags;
     }
   },
   actions: {
@@ -42,3 +62,5 @@ export default new Vuex.Store({
   },
   modules: {}
 });
+
+export default store;
