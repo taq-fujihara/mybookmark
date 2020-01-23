@@ -5,8 +5,6 @@ import repository from "@/repository";
 
 Vue.use(Vuex);
 
-let unsubscribe: () => void;
-
 export default new Vuex.Store({
   state: {
     user: {
@@ -20,10 +18,6 @@ export default new Vuex.Store({
     setUser(state, user) {
       state.user.id = user.id;
       state.user.email = user.email;
-    },
-    clearUser(state) {
-      state.user.id = "";
-      state.user.email = "";
     },
     setBookmarks(state, bookmarks: Array<Bookmark>) {
       state.bookmarks = bookmarks;
