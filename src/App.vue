@@ -8,8 +8,8 @@
     </div>
     <div class="tabs">
       <ul>
-        <li :class="{ 'is-active': currentRoute === 'home' }">
-          <router-link to="/">
+        <li :class="{ 'is-active': currentRoute === 'bookmarks' }">
+          <router-link to="/bookmarks">
             <span class="icon is-small"
               ><i class="fas fa-home" aria-hidden="true"></i
             ></span>
@@ -19,7 +19,7 @@
           </router-link>
         </li>
         <li :class="{ 'is-active': currentRoute === 'edit' }">
-          <router-link to="/edit">
+          <router-link to="/bookmarks/edit">
             <span class="icon is-small"
               ><i class="fas fa-plus-circle" aria-hidden="true"></i
             ></span>
@@ -54,8 +54,6 @@ export default class App extends Vue {
 
   async signOut() {
     await auth.signOut();
-    this.$store.commit("clearUser");
-    this.$store.commit("setBookmarks", []);
   }
 }
 </script>

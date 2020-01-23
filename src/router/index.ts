@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Edit from "../views/Edit.vue";
+import store from "../store";
 
 Vue.use(VueRouter);
 
@@ -12,7 +13,12 @@ const routes = [
     component: Home
   },
   {
-    path: "/edit/:id?",
+    path: "/bookmarks",
+    name: "bookmarks",
+    component: Home
+  },
+  {
+    path: "/bookmarks/edit/:id?",
     name: "edit",
     component: Edit,
     props: true
@@ -32,6 +38,14 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.name === "home") {
+    next("/bookmarks");
+    return;
+  }
+  next();
 });
 
 export default router;

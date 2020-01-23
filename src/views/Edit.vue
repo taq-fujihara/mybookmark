@@ -109,7 +109,7 @@ export default class Edit extends Vue {
       await this.repository.editBookmark(this.bookmark);
     }
 
-    this.$router.push("/");
+    this.$router.push("/bookmarks");
   }
 }
 </script>

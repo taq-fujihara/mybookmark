@@ -9,7 +9,7 @@
         :bookmark="bookmark"
         :highlightedTags="highlightedTags"
         @tagClick="$emit('tagClick', $event)"
-        @edit="$router.push(`/edit/${$event.id}`)"
+        @edit="$router.push(`/bookmarks/edit/${$event.id}`)"
         @delete="deleteBookmark($event)"
       />
     </div>
