@@ -14,7 +14,11 @@ auth().onAuthStateChanged(user => {
   if (!user) {
     auth().signInWithRedirect(new auth.GoogleAuthProvider());
   } else {
-    store.commit("setUser", { id: user.uid, email: user.email });
+    store.commit("setUser", {
+      id: user.uid,
+      email: user.email,
+      photoURL: user.photoURL
+    });
     renderApp();
   }
 });

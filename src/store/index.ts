@@ -11,7 +11,8 @@ const store = new Vuex.Store({
   state: {
     user: {
       id: "",
-      email: ""
+      email: "",
+      photoURL: ""
     },
     bookmarks: new Array<Bookmark>(),
     bookmarksAllFetched: false,
@@ -23,6 +24,7 @@ const store = new Vuex.Store({
     setUser(state, user) {
       state.user.id = user.id;
       state.user.email = user.email;
+      state.user.photoURL = user.photoURL;
 
       if (unsubscribeRecentlyCreatedTag) {
         unsubscribeRecentlyCreatedTag();

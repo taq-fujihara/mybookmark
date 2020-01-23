@@ -1,11 +1,6 @@
 <template>
   <div id="app">
-    <div class="buttons">
-      <a class="button" @click="signOut">
-        Log out
-      </a>
-      <span>{{ $store.state.user.email }}</span>
-    </div>
+    <NavBar />
     <div class="tabs">
       <ul>
         <li :class="{ 'is-active': currentRoute === 'bookmarks' }">
@@ -39,8 +34,11 @@
 import { Component, Vue, Provide } from "vue-property-decorator";
 import repository from "@/repository";
 import { auth } from "@/firebaseApp";
+import NavBar from "@/components/NavBar.vue";
 
-@Component
+@Component({
+  components: { NavBar }
+})
 export default class App extends Vue {
   @Provide()
   repository = repository;
@@ -68,5 +66,10 @@ export default class App extends Vue {
   color: #2c3e50;
 
   padding: 32px;
+}
+</style>
+
+<style lang="scss" scoped>
+header {
 }
 </style>
