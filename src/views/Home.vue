@@ -18,7 +18,7 @@
       <Bookmarks
         :bookmarks="bookmarks"
         :highlightedTags="filter.tags"
-        @tagClick="addFilterTag"
+        @tagClick="toggleFilterTag"
       />
     </div>
     <div class="show-more" v-if="!$store.state.bookmarksAllFetched">
@@ -59,6 +59,14 @@ export default class Home extends Vue {
   @Watch("filter", { immediate: true })
   async onFilterChange(filter: BookmarkFilter) {
     await this.$store.dispatch("fetchBookmarks", { filter });
+  }
+
+  toggleFilterTag(tag: string): void {
+    if (this.filter.tags.includes(tag)) {
+      this.removeFilterTag(tag);
+    } else {
+      this.addFilterTag(tag);
+    }
   }
 
   addFilterTag(tag: string): void {
