@@ -20,10 +20,13 @@ export const updateTagOnBookmarkWrite = functions.firestore
         .where("tags", "array-contains", tag)
         .get()
         .then(snapshot =>
-          db.doc(`users/${userId}/tags/${tag}`).set({
-            bookmarkCount: snapshot.size,
-            tagName: tag
-          })
+          db.doc(`users/${userId}/tags/${tag}`).set(
+            {
+              bookmarkCount: snapshot.size,
+              tagName: tag
+            },
+            { merge: true }
+          )
         )
     );
 
