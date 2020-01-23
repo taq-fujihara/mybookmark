@@ -12,15 +12,7 @@ Vue.config.productionTip = false;
 
 auth().onAuthStateChanged(user => {
   if (!user) {
-    auth()
-      .signInWithPopup(new auth.GoogleAuthProvider())
-      .then(async result => {
-        store.commit("setUser", { id: result!.user!.uid });
-        renderApp();
-      })
-      .catch(e => {
-        alert("Error!");
-      });
+    auth().signInWithRedirect(new auth.GoogleAuthProvider());
   } else {
     store.commit("setUser", { id: user.uid, email: user.email });
     renderApp();
