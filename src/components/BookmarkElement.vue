@@ -37,7 +37,7 @@
           class="icon is-small button-list__button clickable"
           @click="$emit('delete', bookmark)"
         >
-          <i class="fas fa-trash"></i>
+          <i class="fas fa-archive"></i>
         </span>
       </div>
     </div>

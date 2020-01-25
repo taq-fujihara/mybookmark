@@ -35,6 +35,15 @@ export const updateTagOnBookmarkWrite = functions.firestore
 
 export const updateTag = functions.firestore
   .document("users/{userId}/tags/{tagId}")
-  .onCreate((snapshot, context) =>
-    snapshot.ref.update({ createdAt: new Date() })
-  );
+  .onCreate(snapshot => snapshot.ref.update({ createdAt: new Date() }));
+
+export const archiveTag = functions.firestore
+  .document("users/{userId}/bookmarks/{bookmarkId}")
+  .onDelete(async (snapshot, context) => {
+    const userId = context.params.userId;
+    const bookmarkId = context.params.bookmarkId;
+
+    await db.doc(`users/${userId}/archivedBookmarks/${bookmarkId}`).set({
+      ...snapshot.data()
+    });
+  });
