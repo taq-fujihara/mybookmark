@@ -30,6 +30,10 @@ const store = new Vuex.Store({
         unsubscribeRecentlyCreatedTag();
       }
 
+      if (!state.user.id) {
+        return;
+      }
+
       unsubscribeRecentlyCreatedTag = repository.onRecentlyAddTagChange(
         user.id,
         11,
@@ -54,9 +58,9 @@ const store = new Vuex.Store({
       );
 
       if (pagination) {
-        state.bookmarks = [...state.bookmarks, ...bookmarks];
+        commit("setBookmarks", [...state.bookmarks, ...bookmarks]);
       } else {
-        state.bookmarks = bookmarks;
+        commit("setBookmarks", bookmarks);
       }
 
       state.bookmarksAllFetched = bookmarks.length === 0;

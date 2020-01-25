@@ -10,12 +10,12 @@ import { auth } from "@/firebaseApp";
 import * as firebase from "firebase";
 import * as firebaseui from "firebaseui";
 
+const ui = new firebaseui.auth.AuthUI(auth);
+
 @Component
 export default class Auth extends Vue {
-  ui = new firebaseui.auth.AuthUI(auth);
-
   mounted() {
-    this.ui.start(this.$refs.authUi as Element, {
+    ui.start(this.$refs.authUi as Element, {
       signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID]
     });
   }

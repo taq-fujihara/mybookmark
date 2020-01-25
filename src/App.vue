@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Provide } from "vue-property-decorator";
+import { Component, Vue, Provide, Watch } from "vue-property-decorator";
 import repository from "@/repository";
 import { auth } from "@/firebaseApp";
 import NavBar from "@/components/NavBar.vue";
@@ -43,7 +43,7 @@ export default class App extends Vue {
   @Provide()
   repository = repository;
 
-  get currentRoute(): String {
+  get currentRoute(): string {
     if (!this.$route.name) {
       return "";
     }
@@ -52,6 +52,15 @@ export default class App extends Vue {
 
   async signOut() {
     await auth.signOut();
+  }
+
+  @Watch("$store.state.user.id")
+  onAuthStateChanged(userId: string) {
+    if (userId) {
+      this.$router.push("/");
+    } else {
+      this.$router.push("/auth");
+    }
   }
 }
 </script>
@@ -66,10 +75,5 @@ export default class App extends Vue {
   color: #2c3e50;
 
   padding: 32px;
-}
-</style>
-
-<style lang="scss" scoped>
-header {
 }
 </style>
