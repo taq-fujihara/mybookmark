@@ -1,6 +1,6 @@
-.tag-list {
-  &__tag:not(:first-of-type) {
-    margin-left: var(--spacing-small);
+.tags {
+  &:not(:last-child) {
+    margin-bottom: 0;
   }
 }
 

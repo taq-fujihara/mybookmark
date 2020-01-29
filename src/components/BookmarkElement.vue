@@ -4,16 +4,15 @@
       <div class="bookmark-title">
         {{ bookmark.title }}
       </div>
-      <div class="tag-list">
-        <span
-          class="tag is-light tag-list__tag clickable"
-          :class="{ 'is-primary': highlightedTags.includes(tag) }"
+      <div class="tags">
+        <Tag
           v-for="tag in bookmark.tags"
           :key="tag"
+          :text="tag"
+          :primary="highlightedTags.includes(tag)"
+          :light="true"
           @click="$emit('tagClick', tag)"
-        >
-          {{ tag }}
-        </span>
+        />
       </div>
       <div class="bookmark-link">
         <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
@@ -47,8 +46,11 @@
 <script lang="ts">
 import { Component, Prop, Vue, Inject } from "vue-property-decorator";
 import Bookmark from "@/models/Bookmark";
+import Tag from "@/components/Tag.vue";
 
-@Component
+@Component({
+  components: { Tag }
+})
 export default class BookmarkElement extends Vue {
   @Prop({ required: true }) bookmark!: Bookmark;
 
@@ -76,6 +78,8 @@ export default class BookmarkElement extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  // すぐ上のタグリストでは下マージンがついているのでトップをキャンセル
+  margin-top: 0 !important;
 }
 
 .bookmark-actions {

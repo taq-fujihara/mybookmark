@@ -1,20 +1,16 @@
 <template>
   <div class="home">
     <div class="filter">
-      <i class="fas fa-filter"></i>
-      <span class="tag-list">
-        <span
-          class="tag is-primary tag-list__tag"
-          v-for="tag in filter.tags"
-          :key="tag"
-        >
+      <i class="fas fa-filter" />
+      <div class="tags">
+        <Tag v-for="tag in filter.tags" :key="tag" :primary="true">
           {{ tag }}
           <button
             class="delete is-small"
             @click="removeFilterTag(tag)"
           ></button>
-        </span>
-      </span>
+        </Tag>
+      </div>
       <input
         class="input is-small filter-tag-input"
         type="text"
@@ -37,15 +33,14 @@
         </span>
       </div>
       <div class="tags">
-        <span
-          class="tag is-light clickable"
-          :class="{ 'is-primary': filter.tags.includes(tag) }"
-          v-for="tag in $store.state.tags.recentlyCreated.slice(0, 10)"
+        <Tag
+          v-for="tag in $store.state.tags"
           :key="tag"
+          :text="tag"
+          :primary="filter.tags.includes(tag)"
+          :light="true"
           @click="toggleFilterTag(tag)"
-        >
-          {{ tag }}
-        </span>
+        />
       </div>
     </div>
     <div>
@@ -64,12 +59,14 @@
 <script lang="ts">
 import { Component, Prop, Vue, Inject, Watch } from "vue-property-decorator";
 import Bookmarks from "@/components/Bookmarks.vue";
+import Tag from "@/components/Tag.vue";
 import Bookmark from "@/models/Bookmark";
 import BookmarkFilter from "@/models/BookmarksFilter";
 
 @Component({
   components: {
-    Bookmarks
+    Bookmarks,
+    Tag
   }
 })
 export default class Home extends Vue {
@@ -136,10 +133,6 @@ export default class Home extends Vue {
 .filter {
   display: flex;
   align-items: center;
-}
-
-.tag-list {
-  margin-left: var(--spacing-small);
 }
 
 .show-more {
