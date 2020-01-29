@@ -34,13 +34,16 @@
       </div>
       <div class="tags">
         <Tag
-          v-for="tag in $store.state.tags"
+          v-for="tag in $store.state.tags.list"
           :key="tag"
           :text="tag"
           :primary="filter.tags.includes(tag)"
           :light="true"
           @click="toggleFilterTag(tag)"
         />
+        <span class="sub-text" v-if="$store.state.tags.more">
+          <a @click="$store.dispatch('loadAllTags')">show all</a>
+        </span>
       </div>
     </div>
     <div>

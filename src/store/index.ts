@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 let unsubscribeTags: () => void;
 
-const store = new Vuex.Store({
+export default new Vuex.Store({
   state: {
     user: {
       id: "",
@@ -16,10 +16,13 @@ const store = new Vuex.Store({
     },
     bookmarks: new Array<Bookmark>(),
     bookmarksAllFetched: false,
-    tags: new Array<string>()
+    tags: {
+      list: new Array<string>(),
+      more: false
+    }
   },
   mutations: {
-    setUser(state, user) {
+    setUser(state, user): void {
       state.user.id = user.id;
       state.user.email = user.email;
       state.user.photoURL = user.photoURL;
@@ -32,15 +35,13 @@ const store = new Vuex.Store({
         return;
       }
 
-      unsubscribeTags = repository.onTagsChange(user.id, 10, tags => {
-        store.commit("setTags", tags);
+      unsubscribeTags = repository.onTagsChange(user.id, 11, tags => {
+        state.tags.list = tags.slice(0, 10);
+        state.tags.more = tags.length > 10;
       });
     },
-    setBookmarks(state, bookmarks: Array<Bookmark>) {
+    setBookmarks(state, bookmarks: Array<Bookmark>): void {
       state.bookmarks = bookmarks;
-    },
-    setTags(state, tags: Array<string>) {
-      state.tags = tags;
     }
   },
   actions: {
@@ -58,9 +59,16 @@ const store = new Vuex.Store({
       }
 
       state.bookmarksAllFetched = bookmarks.length === 0;
+    },
+    loadAllTags({ state }) {
+      if (unsubscribeTags) {
+        unsubscribeTags();
+      }
+      unsubscribeTags = repository.onTagsChange(state.user.id, 100, tags => {
+        state.tags.list = tags;
+        state.tags.more = false;
+      });
     }
   },
   modules: {}
 });
-
-export default store;
