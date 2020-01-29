@@ -1,8 +1,8 @@
 <template>
   <div class="bookmark">
     <div class="bookmark-info">
-      <div class="bookmark-title">
-        {{ bookmark.title }}
+      <div class="bookmark-title" :class="{ 'no-title': !bookmark.title }">
+        {{ bookmark.title || "No Title" }}
       </div>
       <div class="tags">
         <Tag
@@ -72,6 +72,10 @@ export default class BookmarkElement extends Vue {
   div {
     margin-top: var(--spacing-small);
   }
+}
+
+.no-title {
+  opacity: 0.7;
 }
 
 .bookmark-link {
