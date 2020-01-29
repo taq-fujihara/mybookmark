@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex, { Store } from "vuex";
+import Vuex from "vuex";
 import Bookmark from "@/models/Bookmark";
 import repository from "@/repository";
 
