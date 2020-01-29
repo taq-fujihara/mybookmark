@@ -28,9 +28,9 @@ function docToModel(userId: string, docRef: DocumentSnapshot): Bookmark {
 }
 
 function cleanTags(tags: Array<string>): Array<string> {
-  // drop duplicates
-  const distinct = Array.from(new Set<string>(tags));
-  return distinct.sort();
+  return Array.from(new Set<string>(tags))
+    .filter(t => !!t)
+    .sort();
 }
 
 async function getAllBookmarks(userId: string): Promise<Array<Bookmark>> {

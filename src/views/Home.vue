@@ -11,7 +11,7 @@
           ></button>
         </Tag>
       </div>
-      <!-- <input
+      <input
         class="input is-small filter-tag-input"
         type="text"
         v-model="filterTagInput"
@@ -24,33 +24,13 @@
           filterTagInput = '';
         "
         placeholder="Tag"
-      /> -->
+      />
     </div>
     <div>
-      <div class="field">
-        <div class="control">
-          <div class="select is-small">
-            <select v-model="tagsSort">
-              <option value="createdAt/desc">Recently Created</option>
-              <option value="tagName/asc">A-Z</option>
-              <option value="tagName/desc">Z-A</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="tags">
-        <Tag
-          v-for="tag in $store.state.tags.list"
-          :key="tag"
-          :text="tag"
-          :primary="filter.tags.includes(tag)"
-          :light="true"
-          @click="toggleFilterTag(tag)"
-        />
-        <span class="sub-text" v-if="$store.state.tags.more">
-          <a @click="$store.dispatch('loadAllTags')">show all</a>
-        </span>
-      </div>
+      <Tags
+        :highlightedTags="filter.tags"
+        @tagClick="toggleFilterTag($event)"
+      />
     </div>
     <div>
       <Bookmarks
@@ -69,18 +49,18 @@
 import { Component, Prop, Vue, Inject, Watch } from "vue-property-decorator";
 import Bookmarks from "@/components/Bookmarks.vue";
 import Tag from "@/components/Tag.vue";
+import Tags from "@/components/Tags.vue";
 import Bookmark from "@/models/Bookmark";
 import BookmarkFilter from "@/models/BookmarksFilter";
 
 @Component({
   components: {
     Bookmarks,
-    Tag
+    Tag,
+    Tags
   }
 })
 export default class Home extends Vue {
-  private p_tagsSort: string = "createdAt/desc";
-
   get bookmarks(): Array<Bookmark> {
     return this.$store.state.bookmarks;
   }
@@ -96,15 +76,6 @@ export default class Home extends Vue {
     }
 
     return filter;
-  }
-
-  get tagsSort(): string {
-    return this.p_tagsSort;
-  }
-  set tagsSort(value: string) {
-    this.p_tagsSort = value;
-    const values = value.split("/");
-    this.$store.dispatch("loadTags", { by: values[0], order: values[1] });
   }
 
   filterTagInput = "";

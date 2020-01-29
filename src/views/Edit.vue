@@ -35,6 +35,10 @@
           <i class="fas fa-tags"></i>
         </span>
       </p>
+      <Tags
+        :highlightedTags="bookmark.tags"
+        @tagClick="tags = `${tags} ${$event}`"
+      />
       <p class="control has-icons-left">
         <input
           class="input"
@@ -60,10 +64,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Inject } from "vue-property-decorator";
+import Tags from "@/components/Tags.vue";
 import Bookmark from "@/models/Bookmark";
 import Repository from "@/models/Repository";
 
-@Component
+@Component({
+  components: { Tags }
+})
 export default class Edit extends Vue {
   @Inject()
   readonly repository!: Repository;
