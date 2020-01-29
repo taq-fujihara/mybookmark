@@ -5,6 +5,8 @@ import repository from "@/repository";
 
 Vue.use(Vuex);
 
+const DEFAULT_VISIBLE_TAGS_MAX = 10;
+
 let unsubscribeTags: () => void;
 
 export default new Vuex.Store({
@@ -17,6 +19,10 @@ export default new Vuex.Store({
     bookmarks: new Array<Bookmark>(),
     bookmarksAllFetched: false,
     tags: {
+      sort: {
+        by: "createdAt",
+        order: "desc" as "asc" | "desc"
+      },
       list: new Array<string>(),
       more: false
     }
@@ -26,19 +32,6 @@ export default new Vuex.Store({
       state.user.id = user.id;
       state.user.email = user.email;
       state.user.photoURL = user.photoURL;
-
-      if (unsubscribeTags) {
-        unsubscribeTags();
-      }
-
-      if (!state.user.id) {
-        return;
-      }
-
-      unsubscribeTags = repository.onTagsChange(user.id, 11, tags => {
-        state.tags.list = tags.slice(0, 10);
-        state.tags.more = tags.length > 10;
-      });
     },
     setBookmarks(state, bookmarks: Array<Bookmark>): void {
       state.bookmarks = bookmarks;
@@ -60,14 +53,36 @@ export default new Vuex.Store({
 
       state.bookmarksAllFetched = bookmarks.length === 0;
     },
+    loadTags({ state }, { by = "createdAt", order = "desc" }) {
+      if (unsubscribeTags) {
+        unsubscribeTags();
+      }
+      unsubscribeTags = repository.onTagsChange(
+        state.user.id,
+        { by, order },
+        DEFAULT_VISIBLE_TAGS_MAX + 1,
+        tags => {
+          state.tags.sort.by = by;
+          state.tags.sort.order = order;
+          state.tags.list = tags.slice(0, DEFAULT_VISIBLE_TAGS_MAX);
+          state.tags.more = tags.length > DEFAULT_VISIBLE_TAGS_MAX;
+        }
+      );
+    },
     loadAllTags({ state }) {
       if (unsubscribeTags) {
         unsubscribeTags();
       }
-      unsubscribeTags = repository.onTagsChange(state.user.id, 100, tags => {
-        state.tags.list = tags;
-        state.tags.more = false;
-      });
+      // ソートは現在の選択を引き継ぐ
+      unsubscribeTags = repository.onTagsChange(
+        state.user.id,
+        { by: state.tags.sort.by, order: state.tags.sort.order },
+        0,
+        tags => {
+          state.tags.list = tags;
+          state.tags.more = false;
+        }
+      );
     }
   },
   modules: {}

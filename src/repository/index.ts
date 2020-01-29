@@ -168,16 +168,24 @@ export default {
   },
   onTagsChange(
     userId: string,
+    sort: {
+      by: string;
+      order: "asc" | "desc";
+    },
     limit: number,
     callback: (tags: Array<string>) => void
   ): () => void {
-    return db
+    let query = db
       .collection(`users/${userId}/tags`)
-      .orderBy("createdAt", "desc")
-      .limit(limit)
-      .onSnapshot(snapshot => {
-        const tags = snapshot.docs.map(docRef => docRef.data().tagName);
-        callback(tags);
-      });
+      .orderBy(sort.by, sort.order);
+
+    if (limit > 0) {
+      query = query.limit(limit);
+    }
+
+    return query.onSnapshot(snapshot => {
+      const tags = snapshot.docs.map(docRef => docRef.data().tagName);
+      callback(tags);
+    });
   }
 };

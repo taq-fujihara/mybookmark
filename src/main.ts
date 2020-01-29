@@ -12,7 +12,7 @@ Vue.config.productionTip = false;
 
 let app: Vue;
 
-auth().onAuthStateChanged(user => {
+auth().onAuthStateChanged(async user => {
   if (!user) {
     store.commit("setUser", {
       id: "",
@@ -25,6 +25,7 @@ auth().onAuthStateChanged(user => {
       email: user.email,
       photoURL: user.photoURL
     });
+    await store.dispatch("loadTags", {});
   }
   renderApp(App);
 });

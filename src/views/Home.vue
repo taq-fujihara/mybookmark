@@ -11,7 +11,7 @@
           ></button>
         </Tag>
       </div>
-      <input
+      <!-- <input
         class="input is-small filter-tag-input"
         type="text"
         v-model="filterTagInput"
@@ -24,13 +24,19 @@
           filterTagInput = '';
         "
         placeholder="Tag"
-      />
+      /> -->
     </div>
     <div>
-      <div>
-        <span class="sub-text">
-          Recently Created
-        </span>
+      <div class="field">
+        <div class="control">
+          <div class="select is-small">
+            <select v-model="tagsSort">
+              <option value="createdAt/desc">Recently Created</option>
+              <option value="tagName/asc">A-Z</option>
+              <option value="tagName/desc">Z-A</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div class="tags">
         <Tag
@@ -73,6 +79,8 @@ import BookmarkFilter from "@/models/BookmarksFilter";
   }
 })
 export default class Home extends Vue {
+  private p_tagsSort: string = "createdAt/desc";
+
   get bookmarks(): Array<Bookmark> {
     return this.$store.state.bookmarks;
   }
@@ -88,6 +96,15 @@ export default class Home extends Vue {
     }
 
     return filter;
+  }
+
+  get tagsSort(): string {
+    return this.p_tagsSort;
+  }
+  set tagsSort(value: string) {
+    this.p_tagsSort = value;
+    const values = value.split("/");
+    this.$store.dispatch("loadTags", { by: values[0], order: values[1] });
   }
 
   filterTagInput = "";
