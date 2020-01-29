@@ -166,7 +166,7 @@ export default {
       throw new Error(`Failed to delete bookmark: ${bookmark.id}`);
     }
   },
-  onRecentlyAddTagChange(
+  onTagsChange(
     userId: string,
     limit: number,
     callback: (tags: Array<string>) => void

@@ -5,7 +5,7 @@ import repository from "@/repository";
 
 Vue.use(Vuex);
 
-let unsubscribeRecentlyCreatedTag: () => void;
+let unsubscribeTags: () => void;
 
 const store = new Vuex.Store({
   state: {
@@ -16,9 +16,7 @@ const store = new Vuex.Store({
     },
     bookmarks: new Array<Bookmark>(),
     bookmarksAllFetched: false,
-    tags: {
-      recentlyCreated: new Array<string>()
-    }
+    tags: new Array<string>()
   },
   mutations: {
     setUser(state, user) {
@@ -26,27 +24,23 @@ const store = new Vuex.Store({
       state.user.email = user.email;
       state.user.photoURL = user.photoURL;
 
-      if (unsubscribeRecentlyCreatedTag) {
-        unsubscribeRecentlyCreatedTag();
+      if (unsubscribeTags) {
+        unsubscribeTags();
       }
 
       if (!state.user.id) {
         return;
       }
 
-      unsubscribeRecentlyCreatedTag = repository.onRecentlyAddTagChange(
-        user.id,
-        11,
-        tags => {
-          store.commit("setRecentlyCreatedTags", tags);
-        }
-      );
+      unsubscribeTags = repository.onTagsChange(user.id, 10, tags => {
+        store.commit("setTags", tags);
+      });
     },
     setBookmarks(state, bookmarks: Array<Bookmark>) {
       state.bookmarks = bookmarks;
     },
-    setRecentlyCreatedTags(state, tags: Array<string>) {
-      state.tags.recentlyCreated = tags;
+    setTags(state, tags: Array<string>) {
+      state.tags = tags;
     }
   },
   actions: {
