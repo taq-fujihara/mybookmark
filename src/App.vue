@@ -7,7 +7,6 @@
 
 <script lang="ts">
 import { Component, Vue, Provide, Watch } from "vue-property-decorator";
-import repository from "@/repository";
 import { auth } from "@/firebaseApp";
 import NavBar from "@/components/NavBar.vue";
 
@@ -15,9 +14,6 @@ import NavBar from "@/components/NavBar.vue";
   components: { NavBar }
 })
 export default class App extends Vue {
-  @Provide()
-  repository = repository;
-
   get currentRoute(): string {
     if (!this.$route.name) {
       return "";

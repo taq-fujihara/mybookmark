@@ -8,7 +8,7 @@ type DocumentSnapshot = firebase.firestore.DocumentSnapshot<
 
 const db = firestore;
 const BATCH_GET_COUNT = 30;
-let lastDoc: DocumentSnapshot | null;
+let lastBookmarkDoc: DocumentSnapshot | null;
 
 function docToModel(userId: string, docRef: DocumentSnapshot): Bookmark {
   const data = docRef.data();
@@ -33,14 +33,19 @@ function cleanTags(tags: Array<string>): Array<string> {
     .sort();
 }
 
-async function getAllBookmarks(userId: string): Promise<Array<Bookmark>> {
+/**
+ * ブックマークを取得する
+ *
+ * @param userId ユーザーID
+ */
+async function getBookmarks(userId: string): Promise<Array<Bookmark>> {
   let query = db
     .collection(`users/${userId}/bookmarks`)
     .orderBy("createdAt", "desc")
     .limit(BATCH_GET_COUNT);
 
-  if (lastDoc) {
-    query = query.startAfter(lastDoc);
+  if (lastBookmarkDoc) {
+    query = query.startAfter(lastBookmarkDoc);
   }
 
   const snapshot = await query.get();
@@ -49,12 +54,18 @@ async function getAllBookmarks(userId: string): Promise<Array<Bookmark>> {
 
   snapshot.forEach(doc => {
     bookmarks.push(docToModel(userId, doc));
-    lastDoc = doc;
+    lastBookmarkDoc = doc;
   });
 
   return bookmarks;
 }
 
+/**
+ * 指定のタグが全てついたブックマークを取得する
+ *
+ * @param userId ユーザーID
+ * @param tags 絞込を行うタグ
+ */
 async function getTaggedBookmarks(
   userId: string,
   tags: Array<string>
@@ -66,42 +77,67 @@ async function getTaggedBookmarks(
     .limit(1)
     .get();
 
+  // ブックマークが新規作成されてタグが登録されるまでタイムラグがあるので
+  // 登録直後のタグは取得できないことがある。
   if (tagsSnapshot.size === 0) {
     return [];
   }
 
+  // Firestoreではarray-contains-anyでAND検索はできないので、
+  // 一番ブックマーク数が少ないタグがついたブックマークを拾い、
+  // その中で他のタグも全て持っているブックマークに絞り込む。
   const minCountTag = tagsSnapshot.docs[0].data().tagName;
   const otherTags = tags.filter(t => t !== minCountTag);
 
-  let query = db
-    .collection(`users/${userId}/bookmarks`)
-    .where("tags", "array-contains", minCountTag)
-    .orderBy("createdAt", "desc")
-    .limit(BATCH_GET_COUNT);
-
-  if (lastDoc) {
-    query = query.startAfter(lastDoc);
-  }
-
   const bookmarks: Array<Bookmark> = [];
 
-  const snapshot = await query.get();
-  snapshot.forEach(doc => {
-    const tags = doc.data().tags;
-    if (otherTags.every(t => tags.includes(t))) {
-      bookmarks.push(docToModel(userId, doc));
+  const a = true;
+
+  // 一回のクエリで取得するのはあくまで特定のタグ（ブックマーク数が一番少ない）
+  // を持つブックマークなので、fetch外にまだ条件に合致するブックマークがある可能性が
+  // あるので、ヒットしたブックマーク数がバッチ数に達するまで繰り返しfetchする。
+  while (bookmarks.length < BATCH_GET_COUNT) {
+    let query = db
+      .collection(`users/${userId}/bookmarks`)
+      .where("tags", "array-contains", minCountTag)
+      .orderBy("createdAt", "desc")
+      .limit(BATCH_GET_COUNT);
+
+    if (lastBookmarkDoc) {
+      query = query.startAfter(lastBookmarkDoc);
     }
-    lastDoc = doc;
-  });
+
+    const snapshot = await query.get();
+
+    if (snapshot.size === 0) {
+      break;
+    }
+
+    snapshot.forEach(doc => {
+      const tags = doc.data().tags;
+      if (otherTags.every(t => tags.includes(t))) {
+        bookmarks.push(docToModel(userId, doc));
+      }
+      lastBookmarkDoc = doc;
+    });
+  }
 
   return bookmarks;
 }
 
-export default {
-  async getBookmark(userId: string, bookmarkId: string): Promise<Bookmark> {
+export default class Repository {
+  /**
+   * ブックマーク取得
+   *
+   * @param userId ユーザーID
+   * @param bookmarkId ブックマークID
+   */
+  static async getBookmark(
+    userId: string,
+    bookmarkId: string
+  ): Promise<Bookmark> {
     const docRef = await db
-      .collection(`users/${userId}/bookmarks`)
-      .doc(bookmarkId)
+      .doc(`users/${userId}/bookmarks/${bookmarkId}`)
       .get();
 
     if (!docRef.exists) {
@@ -109,25 +145,41 @@ export default {
     }
 
     return docToModel(userId, docRef);
-  },
-  async getBookmarks(
+  }
+
+  /**
+   * ブックマーク取得
+   *
+   * ページング有無にtrueをした場合、前回取得ブックマークの続きから取得する。
+   *
+   * @param userId ユーザーID
+   * @param filter 絞込条件
+   * @param pagination ページング有無
+   */
+  static async getBookmarks(
     userId: string,
     filter: BookmarkFilter,
     pagination: boolean = false
   ): Promise<Array<Bookmark>> {
     if (!pagination) {
-      lastDoc = null;
+      lastBookmarkDoc = null;
     }
 
     const hasTagFilter = filter.tags && filter.tags.length > 0;
 
     if (hasTagFilter) {
-      return await getTaggedBookmarks(userId, filter.tags);
+      return getTaggedBookmarks(userId, filter.tags);
     } else {
-      return getAllBookmarks(userId);
+      return getBookmarks(userId);
     }
-  },
-  async addBookmark(bookmark: Bookmark): Promise<void> {
+  }
+
+  /**
+   * ブックマーク追加
+   *
+   * @param bookmark ブックマーク
+   */
+  static async addBookmark(bookmark: Bookmark): Promise<void> {
     try {
       await db.collection(`users/${bookmark.userId}/bookmarks`).add({
         title: bookmark.title,
@@ -139,8 +191,9 @@ export default {
     } catch (error) {
       throw new Error("Failed to add bookmark");
     }
-  },
-  async editBookmark(bookmark: Bookmark): Promise<void> {
+  }
+
+  static async editBookmark(bookmark: Bookmark): Promise<void> {
     try {
       const docRef = await db
         .collection(`users/${bookmark.userId}/bookmarks`)
@@ -155,8 +208,9 @@ export default {
     } catch (error) {
       throw new Error("Failed to add bookmark");
     }
-  },
-  async deleteBookmark(bookmark: Bookmark): Promise<void> {
+  }
+
+  static async deleteBookmark(bookmark: Bookmark): Promise<void> {
     try {
       await db
         .collection(`users/${bookmark.userId}/bookmarks`)
@@ -165,8 +219,9 @@ export default {
     } catch (error) {
       throw new Error(`Failed to delete bookmark: ${bookmark.id}`);
     }
-  },
-  onTagsChange(
+  }
+
+  static onTagsChange(
     userId: string,
     sort: {
       by: string;
@@ -188,4 +243,4 @@ export default {
       callback(tags);
     });
   }
-};
+}

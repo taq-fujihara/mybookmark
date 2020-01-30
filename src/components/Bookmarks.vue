@@ -20,7 +20,7 @@
 import { Component, Prop, Vue, Inject, Watch } from "vue-property-decorator";
 import Bookmark from "@/models/Bookmark";
 import BookmarkElement from "@/components/BookmarkElement.vue";
-import Repository from "@/models/Repository";
+import Repository from "@/repository";
 
 @Component({
   components: {
@@ -28,9 +28,6 @@ import Repository from "@/models/Repository";
   }
 })
 export default class Bookmarks extends Vue {
-  @Inject()
-  readonly repository!: Repository;
-
   @Prop({ default: () => [] })
   bookmarks!: Array<Bookmark>;
 
@@ -38,7 +35,7 @@ export default class Bookmarks extends Vue {
   highlightedTags!: Array<string>;
 
   async deleteBookmark(bookmark: Bookmark): Promise<void> {
-    await this.repository.deleteBookmark(bookmark);
+    await Repository.deleteBookmark(bookmark);
   }
 }
 </script>

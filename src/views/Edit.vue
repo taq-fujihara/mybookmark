@@ -68,15 +68,12 @@
 import { Component, Prop, Vue, Inject } from "vue-property-decorator";
 import Tags from "@/components/Tags.vue";
 import Bookmark from "@/models/Bookmark";
-import Repository from "@/models/Repository";
+import Repository from "@/repository";
 
 @Component({
   components: { Tags }
 })
 export default class Edit extends Vue {
-  @Inject()
-  readonly repository!: Repository;
-
   @Prop()
   id!: string;
 
@@ -104,7 +101,7 @@ export default class Edit extends Vue {
 
   async created() {
     if (this.id) {
-      this.bookmark = await this.repository.getBookmark(
+      this.bookmark = await Repository.getBookmark(
         this.$store.state.user.id,
         this.id
       );
@@ -113,9 +110,9 @@ export default class Edit extends Vue {
 
   async edit(bookmarkContent: Bookmark) {
     if (!this.id) {
-      await this.repository.addBookmark(this.bookmark);
+      await Repository.addBookmark(this.bookmark);
     } else {
-      await this.repository.editBookmark(this.bookmark);
+      await Repository.editBookmark(this.bookmark);
     }
 
     this.$router.push("/bookmarks");

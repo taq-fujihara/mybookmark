@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Bookmark from "@/models/Bookmark";
-import repository from "@/repository";
+import Repository from "@/repository";
 
 Vue.use(Vuex);
 
@@ -39,7 +39,7 @@ export default new Vuex.Store({
   },
   actions: {
     async fetchBookmarks({ commit, state }, { filter, pagination }) {
-      const bookmarks = await repository.getBookmarks(
+      const bookmarks = await Repository.getBookmarks(
         state.user.id,
         filter,
         pagination
@@ -57,7 +57,7 @@ export default new Vuex.Store({
       if (unsubscribeTags) {
         unsubscribeTags();
       }
-      unsubscribeTags = repository.onTagsChange(
+      unsubscribeTags = Repository.onTagsChange(
         state.user.id,
         { by, order },
         DEFAULT_VISIBLE_TAGS_MAX + 1,
@@ -74,7 +74,7 @@ export default new Vuex.Store({
         unsubscribeTags();
       }
       // ソートは現在の選択を引き継ぐ
-      unsubscribeTags = repository.onTagsChange(
+      unsubscribeTags = Repository.onTagsChange(
         state.user.id,
         { by: state.tags.sort.by, order: state.tags.sort.order },
         0,
