@@ -35,10 +35,12 @@
           <i class="fas fa-tags"></i>
         </span>
       </p>
-      <Tags
-        :highlightedTags="bookmark.tags"
-        @tagClick="tags = `${tags} ${$event}`"
-      />
+      <p class="tags-container">
+        <Tags
+          :highlightedTags="bookmark.tags"
+          @tagClick="tags = `${tags} ${$event}`"
+        />
+      </p>
       <p class="control has-icons-left">
         <input
           class="input"
@@ -123,6 +125,10 @@ export default class Edit extends Vue {
 
 <style lang="scss" scoped>
 .control {
-  margin-top: 32px;
+  margin-top: var(--spacing-large);
+}
+
+.tags-container {
+  margin-top: var(--spacing-small);
 }
 </style>

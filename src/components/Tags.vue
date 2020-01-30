@@ -1,15 +1,11 @@
 <template>
   <div class="tags-container">
-    <div class="field">
-      <div class="control">
-        <div class="select is-small">
-          <select v-model="tagsSort">
-            <option value="createdAt/desc">Recently Created</option>
-            <option value="tagName/asc">A-Z</option>
-            <option value="tagName/desc">Z-A</option>
-          </select>
-        </div>
-      </div>
+    <div class="select is-small">
+      <select v-model="tagsSort">
+        <option value="createdAt/desc">Recently Created</option>
+        <option value="tagName/asc">A-Z</option>
+        <option value="tagName/desc">Z-A</option>
+      </select>
     </div>
     <div class="tags">
       <Tag
@@ -20,7 +16,7 @@
         :light="true"
         @click="$emit('tagClick', tag)"
       />
-      <span class="sub-text" v-if="$store.state.tags.more">
+      <span class="sub-text tag is-white" v-if="$store.state.tags.more">
         <a @click="$store.dispatch('loadAllTags')">show all</a>
       </span>
     </div>
@@ -52,7 +48,7 @@ export default class Tags extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.tags-container {
+.tags {
   margin-top: var(--spacing-small);
 }
 </style>

@@ -1,39 +1,44 @@
 <template>
   <div class="home">
     <div class="filter">
-      <i class="fas fa-filter" />
-      <div class="tags">
-        <Tag v-for="tag in filter.tags" :key="tag" :primary="true">
-          {{ tag }}
-          <button
-            class="delete is-small"
-            @click="removeFilterTag(tag)"
-          ></button>
-        </Tag>
+      <div class="filter__selected">
+        <i class="fas fa-filter" />
+        <div class="tags">
+          <Tag v-for="tag in filter.tags" :key="tag" :primary="true">
+            {{ tag }}
+            <button
+              class="delete is-small"
+              @click="removeFilterTag(tag)"
+            ></button>
+          </Tag>
+          <!-- <input
+            class="input is-small filter-tag-input"
+            type="text"
+            v-model="filterTagInput"
+            @keydown.enter="
+              addFilterTag(filterTagInput);
+              filterTagInput = '';
+            "
+            @keydown.space="
+              addFilterTag(filterTagInput);
+              filterTagInput = '';
+            "
+            placeholder="Tag"
+          /> -->
+        </div>
       </div>
-      <input
-        class="input is-small filter-tag-input"
-        type="text"
-        v-model="filterTagInput"
-        @keydown.enter="
-          addFilterTag(filterTagInput);
-          filterTagInput = '';
-        "
-        @keydown.space="
-          addFilterTag(filterTagInput);
-          filterTagInput = '';
-        "
-        placeholder="Tag"
-      />
     </div>
-    <div>
+    <div class="selectable-tags">
       <Tags
         :highlightedTags="filter.tags"
         @tagClick="toggleFilterTag($event)"
       />
     </div>
     <div class="bookmarks">
-      <a @click="$router.push('/bookmarks/edit')">Add Bookmark...</a>
+      <a class="sub-text" @click="$router.push('/bookmarks/edit')">
+        <i class="fas fa-plus-square" />
+        Add Bookmark...
+      </a>
       <Bookmarks
         :bookmarks="bookmarks"
         :highlightedTags="filter.tags"
@@ -123,10 +128,23 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 .filter {
+  margin-top: var(--spacing-large);
   display: flex;
   align-items: center;
+
+  &__selected {
+    display: flex;
+    align-items: center;
+  }
+
+  .tags {
+    margin-left: var(--spacing-small);
+  }
 }
 
+.selectable-tags {
+  margin-top: var(--spacing-small);
+}
 
 .bookmarks {
   margin-top: var(--spacing-large);
@@ -138,6 +156,5 @@ export default class Home extends Vue {
 
 .filter-tag-input {
   width: 100px;
-  margin-left: var(--spacing-small);
 }
 </style>
