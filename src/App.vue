@@ -1,31 +1,6 @@
 <template>
   <div id="app">
     <NavBar @logout="signOut" />
-    <div class="tabs">
-      <ul>
-        <li :class="{ 'is-active': currentRoute === 'bookmarks' }">
-          <router-link to="/bookmarks">
-            <span class="icon is-small"
-              ><i class="fas fa-home" aria-hidden="true"></i
-            ></span>
-            <span>
-              Home
-            </span>
-          </router-link>
-        </li>
-        <li :class="{ 'is-active': currentRoute === 'edit' }">
-          <router-link to="/bookmarks/edit">
-            <span class="icon is-small"
-              ><i class="fas fa-plus-circle" aria-hidden="true"></i
-            ></span>
-            <span>
-              Add / Edit
-            </span>
-          </router-link>
-        </li>
-      </ul>
-    </div>
-
     <router-view />
   </div>
 </template>

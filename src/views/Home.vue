@@ -32,7 +32,8 @@
         @tagClick="toggleFilterTag($event)"
       />
     </div>
-    <div>
+    <div class="bookmarks">
+      <a @click="$router.push('/bookmarks/edit')">Add Bookmark...</a>
       <Bookmarks
         :bookmarks="bookmarks"
         :highlightedTags="filter.tags"
@@ -124,6 +125,11 @@ export default class Home extends Vue {
 .filter {
   display: flex;
   align-items: center;
+}
+
+
+.bookmarks {
+  margin-top: var(--spacing-large);
 }
 
 .show-more {
