@@ -1,44 +1,42 @@
 <template>
   <div class="bookmark">
-    <div class="bookmark-info">
-      <div class="bookmark-title" :class="{ 'no-title': !bookmark.title }">
-        {{ bookmark.title || "No Title" }}
-      </div>
-      <div class="tags">
-        <Tag
-          v-for="tag in bookmark.tags"
-          :key="tag"
-          :text="tag"
-          :primary="highlightedTags.includes(tag)"
-          :light="true"
-          @click="$emit('tagClick', tag)"
-        />
-      </div>
-      <div class="bookmark-link">
-        <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
-          {{ bookmark.url }}
-        </a>
-      </div>
-      <div class="description sub-text">
-        {{ bookmark.description }}
-      </div>
-      <div class="created-at sub-text">
-        {{ createdAt }}
-      </div>
-      <div class="bookmark-actions button-list">
-        <span
-          class="icon is-small button-list__button clickable"
-          @click="$emit('edit', bookmark)"
-        >
-          <i class="fas fa-edit"></i>
-        </span>
-        <span
-          class="icon is-small button-list__button clickable"
-          @click="$emit('delete', bookmark)"
-        >
-          <i class="fas fa-archive"></i>
-        </span>
-      </div>
+    <div class="bookmark-title" :class="{ 'no-title': !bookmark.title }">
+      {{ bookmark.title || "No Title" }}
+    </div>
+    <div class="tags">
+      <Tag
+        v-for="tag in bookmark.tags"
+        :key="tag"
+        :text="tag"
+        :primary="highlightedTags.includes(tag)"
+        :light="true"
+        @click="$emit('tagClick', tag)"
+      />
+    </div>
+    <div class="bookmark-link">
+      <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
+        {{ bookmark.url }}
+      </a>
+    </div>
+    <div class="description sub-text">
+      {{ bookmark.description }}
+    </div>
+    <div class="created-at sub-text">
+      {{ createdAt }}
+    </div>
+    <div class="bookmark-actions button-list">
+      <span
+        class="icon is-small button-list__button clickable"
+        @click="$emit('edit', bookmark)"
+      >
+        <i class="fas fa-edit"></i>
+      </span>
+      <span
+        class="icon is-small button-list__button clickable"
+        @click="$emit('delete', bookmark)"
+      >
+        <i class="fas fa-archive"></i>
+      </span>
     </div>
   </div>
 </template>
@@ -69,6 +67,8 @@ export default class BookmarkElement extends Vue {
 
 <style lang="scss" scoped>
 .bookmark {
+  width: 100%;
+
   div {
     margin-top: var(--spacing-small);
   }
@@ -79,6 +79,7 @@ export default class BookmarkElement extends Vue {
 }
 
 .bookmark-link {
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

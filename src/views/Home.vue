@@ -1,17 +1,18 @@
 <template>
-  <div class="home">
-    <div class="filter">
-      <div class="filter__selected">
-        <i class="fas fa-filter" />
-        <div class="tags">
-          <Tag v-for="tag in filter.tags" :key="tag" :primary="true">
-            {{ tag }}
-            <button
-              class="delete is-small"
-              @click="removeFilterTag(tag)"
-            ></button>
-          </Tag>
-          <!-- <input
+  <div class="home columns">
+    <div class="column is-one-third">
+      <div class="filter">
+        <div class="filter__selected">
+          <i class="fas fa-filter" />
+          <div class="tags">
+            <Tag v-for="tag in filter.tags" :key="tag" :primary="true">
+              {{ tag }}
+              <button
+                class="delete is-small"
+                @click="removeFilterTag(tag)"
+              ></button>
+            </Tag>
+            <!-- <input
             class="input is-small filter-tag-input"
             type="text"
             v-model="filterTagInput"
@@ -25,16 +26,17 @@
             "
             placeholder="Tag"
           /> -->
+          </div>
         </div>
       </div>
+      <div class="selectable-tags">
+        <Tags
+          :highlightedTags="filter.tags"
+          @tagClick="toggleFilterTag($event)"
+        />
+      </div>
     </div>
-    <div class="selectable-tags">
-      <Tags
-        :highlightedTags="filter.tags"
-        @tagClick="toggleFilterTag($event)"
-      />
-    </div>
-    <div class="bookmarks">
+    <div class="column is-two-thirds">
       <a class="sub-text" @click="$router.push('/bookmarks/edit')">
         <i class="fas fa-plus-square" />
         Add Bookmark...
@@ -44,9 +46,9 @@
         :highlightedTags="filter.tags"
         @tagClick="toggleFilterTag"
       />
-    </div>
-    <div class="show-more sub-text" v-if="!$store.state.bookmarksAllFetched">
-      <a @click="fetchMore">more...</a>
+      <div class="show-more sub-text" v-if="!$store.state.bookmarksAllFetched">
+        <a @click="fetchMore">more...</a>
+      </div>
     </div>
   </div>
 </template>
@@ -127,8 +129,17 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.filter {
+@media screen and (min-width: 769px) {
+  .columns {
+    flex-direction: row-reverse;
+  }
+}
+
+.home {
   margin-top: var(--spacing-large);
+}
+
+.filter {
   display: flex;
   align-items: center;
 
@@ -144,10 +155,6 @@ export default class Home extends Vue {
 
 .selectable-tags {
   margin-top: var(--spacing-small);
-}
-
-.bookmarks {
-  margin-top: var(--spacing-large);
 }
 
 .show-more {
