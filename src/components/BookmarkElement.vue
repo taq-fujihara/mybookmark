@@ -1,7 +1,12 @@
 <template>
   <div class="bookmark">
-    <div class="bookmark-title" :class="{ 'no-title': !bookmark.title }">
-      {{ bookmark.title || "No Title" }}
+    <div
+      class="bookmark-title"
+      :class="{ 'no-title': !bookmark.title, 'bookmark-link': !bookmark.title }"
+    >
+      <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
+        {{ bookmark.title || bookmark.url }}
+      </a>
     </div>
     <div class="tags">
       <Tag
@@ -13,16 +18,11 @@
         @click="$emit('tagClick', tag)"
       />
     </div>
-    <div class="bookmark-link">
-      <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
-        {{ bookmark.url }}
-      </a>
+    <div class="created-at sub-text">
+      {{ createdAt }}
     </div>
     <div class="description sub-text">
       {{ bookmark.description }}
-    </div>
-    <div class="created-at sub-text">
-      {{ createdAt }}
     </div>
     <div class="bookmark-actions button-list">
       <span
@@ -83,6 +83,9 @@ export default class BookmarkElement extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.created-at {
   // すぐ上のタグリストでは下マージンがついているのでトップをキャンセル
   margin-top: 0 !important;
 }

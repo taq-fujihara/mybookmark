@@ -12,20 +12,6 @@
                 @click="removeFilterTag(tag)"
               ></button>
             </Tag>
-            <!-- <input
-            class="input is-small filter-tag-input"
-            type="text"
-            v-model="filterTagInput"
-            @keydown.enter="
-              addFilterTag(filterTagInput);
-              filterTagInput = '';
-            "
-            @keydown.space="
-              addFilterTag(filterTagInput);
-              filterTagInput = '';
-            "
-            placeholder="Tag"
-          /> -->
           </div>
         </div>
       </div>
