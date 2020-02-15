@@ -2,15 +2,9 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <div class="navbar-item">
-        <div class="logo">
-          <img src="../assets/logo.png" />
-          <span class="logo__app-name">Bookmarks</span>
-        </div>
-        <div class="logo">
-          <figure class="image is-24x24">
-            <img class="is-rounded" :src="$store.state.user.photoURL" />
-          </figure>
-        </div>
+        <figure class="image is-24x24">
+          <img class="is-rounded" :src="$store.state.user.photoURL" />
+        </figure>
       </div>
       <a
         role="button"
@@ -26,6 +20,25 @@
       </a>
     </div>
     <div class="navbar-menu" :class="{ 'is-active': menuOpen }">
+      <div class="navbar-start">
+        <a class="navbar-item" @click="movePage('bookmarks')">
+          Bookmarks
+        </a>
+        <a class="navbar-item" @click="movePage('tags')">
+          Tags
+        </a>
+
+        <!-- <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            More
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item">
+              Archived Bookmarks
+            </a>
+          </div>
+        </div> -->
+      </div>
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
@@ -45,6 +58,13 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class App extends Vue {
   menuOpen = false;
+
+  movePage(to: string) {
+    if (this.$route.name !== to) {
+      this.$router.push("/" + to);
+      this.menuOpen = false;
+    }
+  }
 }
 </script>
 
