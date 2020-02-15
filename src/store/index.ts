@@ -5,7 +5,7 @@ import Repository from "@/repository";
 
 Vue.use(Vuex);
 
-const DEFAULT_VISIBLE_TAGS_MAX = 10;
+const DEFAULT_VISIBLE_TAGS_MAX = 20;
 
 let unsubscribeTags: () => void;
 

@@ -3,9 +3,9 @@
     <div class="tag-container" v-for="tag in tags" :key="tag.id">
       <div>
         <i class="fas fa-tag sub-text"></i>
-        <span class="text-with-icon">
+        <a class="text-with-icon" @click="showBookmarks(tag.tagName)">
           {{ tag.tagName }}
-        </span>
+        </a>
       </div>
       <div>
         <i class="fas fa-bookmark sub-text"></i>
@@ -46,7 +46,9 @@
               </p>
             </div>
             <div>
-              <button class="button is-primary">Save changes</button>
+              <button class="button is-primary" @click="saveChanges">
+                Save changes
+              </button>
             </div>
           </div>
         </div>
@@ -79,6 +81,15 @@ export default class Tags extends Vue {
     this.tags = await Repository.getTags(this.$store.state.user.id);
   }
 
+  showBookmarks(tagName: string) {
+    this.$router.push({
+      path: "/bookmarks",
+      query: {
+        tags: tagName
+      }
+    });
+  }
+
   openTagEditModal(tag: Tag): void {
     this.tag = { ...tag };
   }
@@ -93,6 +104,7 @@ export default class Tags extends Vue {
       return;
     }
     await Repository.editTag(this.$store.state.user.id, this.tag);
+    this.tag.id = "";
   }
 }
 </script>
