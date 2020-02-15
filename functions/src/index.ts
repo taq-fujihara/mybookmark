@@ -19,25 +19,89 @@ export const updateTagOnBookmarkWrite = functions.firestore
         .collection(`users/${userId}/bookmarks`)
         .where("tags", "array-contains", tag)
         .get()
-        .then(snapshot =>
-          db.doc(`users/${userId}/tags/${tag}`).set(
-            {
-              bookmarkCount: snapshot.size,
-              tagName: tag
-            },
-            { merge: true }
-          )
-        )
+        .then(snapshot => {
+          const bookmarkCount = snapshot.size;
+
+          if (bookmarkCount === 0) {
+            return db.doc(`users/${userId}/tags/${tag}`).delete();
+          } else {
+            return db.doc(`users/${userId}/tags/${tag}`).set(
+              {
+                bookmarkCount,
+                tagName: tag
+              },
+              { merge: true }
+            );
+          }
+        })
     );
 
     await Promise.all(updates);
   });
 
+export const setCreationTimeOnTag = functions.firestore
+  .document("users/{userId}/tags/{tagId}")
+  .onCreate(snapshot => {
+    const data = snapshot.data();
+    if (!data) {
+      return;
+    }
+    if (data.createdAt) {
+      return;
+    }
+    return snapshot.ref.update({ createdAt: new Date() });
+  });
+
 export const updateTag = functions.firestore
   .document("users/{userId}/tags/{tagId}")
-  .onCreate(snapshot => snapshot.ref.update({ createdAt: new Date() }));
+  .onUpdate(async (change, context) => {
+    const dataBefore = change.before.data();
+    const dataAfter = change.after.data();
 
-export const archiveTag = functions.firestore
+    if (!dataBefore || !dataAfter) {
+      throw new Error(
+        `data empty: ${context.params.userId}, ${context.params.tagId}`
+      );
+    }
+
+    if (dataBefore.tagName === dataAfter.tagName) {
+      return;
+    }
+
+    await db
+      .doc(`users/${context.params.userId}/tags/${dataAfter.tagName}`)
+      .set({
+        ...dataAfter
+      });
+
+    // remove old tag
+    await db
+      .doc(`users/${context.params.userId}/tags/${dataBefore.tagName}`)
+      .delete();
+
+    // update bookmarks
+    const snapshot = await db
+      .collection(`users/${context.params.userId}/bookmarks`)
+      .where("tags", "array-contains", dataBefore.tagName)
+      .get();
+
+    snapshot.forEach(async doc => {
+      const data = doc.data();
+
+      if (!data) {
+        return;
+      }
+
+      const newTags = [
+        ...data.tags.filter((t: string) => t !== dataBefore.tagName),
+        dataAfter.tagName
+      ];
+
+      await doc.ref.update({ tags: newTags });
+    });
+  });
+
+export const archiveBookmark = functions.firestore
   .document("users/{userId}/bookmarks/{bookmarkId}")
   .onDelete(async (snapshot, context) => {
     const userId = context.params.userId;

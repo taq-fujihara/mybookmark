@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 import Auth from "../views/Auth.vue";
 import Home from "../views/Home.vue";
 import Edit from "../views/Edit.vue";
+import Tags from "../views/Tags.vue";
+import TagEdit from "../views/TagEdit.vue";
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -33,6 +35,23 @@ const routes = [
     path: "/bookmarks/edit/:id?",
     name: "edit",
     component: Edit,
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/tags",
+    name: "tags",
+    component: Tags,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/tags/edit/:id",
+    name: "tagEdit",
+    component: TagEdit,
     props: true,
     meta: {
       requiresAuth: true

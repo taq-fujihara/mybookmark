@@ -1,5 +1,6 @@
 import { firestore } from "@/firebaseApp";
 import Bookmark from "@/models/Bookmark";
+import Tag from "@/models/Tag";
 import BookmarkFilter from "@/models/BookmarksFilter";
 
 type DocumentSnapshot = firebase.firestore.DocumentSnapshot<
@@ -218,6 +219,68 @@ export default class Repository {
         .delete();
     } catch (error) {
       throw new Error(`Failed to delete bookmark: ${bookmark.id}`);
+    }
+  }
+
+  static async getTag(userId: string, tagId: string): Promise<Tag> {
+    try {
+      const docRef = await db.doc(`users/${userId}/tags/${tagId}`).get();
+
+      if (!docRef.exists) {
+        throw new Error(`Tag not found: ${tagId}`);
+      }
+
+      const data = docRef.data();
+
+      if (!data) {
+        throw new Error("Failed to retrieve data");
+      }
+
+      return {
+        id: docRef.id,
+        tagName: data.tagName,
+        bookmarkCount: data.bookmarkCount,
+        createdAt: data.createdAt.toDate()
+      };
+    } catch (error) {
+      throw new Error(`Failed to get tags`);
+    }
+  }
+
+  static async getTags(userId: string): Promise<Array<Tag>> {
+    try {
+      const snapshot = await db
+        .collection(`users/${userId}/tags`)
+        .orderBy("tagName", "asc")
+        .limit(30)
+        .get();
+      const tags = new Array<Tag>();
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        tags.push({
+          id: doc.id,
+          tagName: data.tagName,
+          bookmarkCount: data.bookmarkCount,
+          createdAt: data.createdAt.toDate()
+        });
+      });
+
+      return tags;
+    } catch (error) {
+      throw new Error(`Failed to get tags`);
+    }
+  }
+
+  static async editTag(userId: string, tag: Tag): Promise<void> {
+    try {
+      const docRef = db.doc(`users/${userId}/tags/${tag.id}`);
+
+      await docRef.update({
+        tagName: tag.tagName
+      });
+    } catch (error) {
+      throw new Error(`Failed to edit tag: ${error}`);
     }
   }
 
