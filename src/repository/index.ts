@@ -252,7 +252,7 @@ export default class Repository {
       const snapshot = await db
         .collection(`users/${userId}/tags`)
         .orderBy("tagName", "asc")
-        .limit(30)
+        // TODO Pagination
         .get();
       const tags = new Array<Tag>();
 
