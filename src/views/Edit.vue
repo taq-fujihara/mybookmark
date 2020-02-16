@@ -12,12 +12,16 @@
           <i class="fas fa-bookmark"></i>
         </span>
       </p>
-      <p class="control has-icons-left">
+      <p
+        class="control has-icons-left"
+        :class="{ 'is-loading': fetchingMetaInfo }"
+      >
         <input
           class="input"
           type="text"
           v-model="bookmark.title"
-          placeholder="Title"
+          :placeholder="fetchingMetaInfo ? 'Fetching Title...' : 'Title'"
+          :disabled="fetchingMetaInfo"
           required
         />
         <span class="icon is-small is-left">
@@ -65,10 +69,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Inject } from "vue-property-decorator";
+import { Component, Prop, Vue, Inject, Watch } from "vue-property-decorator";
 import Tags from "@/components/Tags.vue";
 import Bookmark from "@/models/Bookmark";
 import Repository from "@/repository";
+import { getMetaInfo } from "@/util/url";
 
 @Component({
   components: { Tags }
@@ -76,6 +81,8 @@ import Repository from "@/repository";
 export default class Edit extends Vue {
   @Prop()
   id!: string;
+
+  fetchingMetaInfo = false;
 
   private get operationText(): string {
     return this.id ? "Edit" : "Add";
@@ -106,6 +113,25 @@ export default class Edit extends Vue {
         this.id
       );
     }
+  }
+
+  @Watch("bookmark.url")
+  async setMetaInfo(v: string) {
+    if (!v) {
+      return;
+    }
+
+    // inhibit user input
+    this.fetchingMetaInfo = true;
+
+    try {
+      const meta = await getMetaInfo(v);
+      this.bookmark.title += meta.title;
+    } catch (error) {
+      // NOP
+    }
+
+    this.fetchingMetaInfo = false;
   }
 
   async edit(bookmarkContent: Bookmark) {

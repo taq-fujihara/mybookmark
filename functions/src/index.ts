@@ -111,3 +111,37 @@ export const archiveBookmark = functions.firestore
       ...snapshot.data()
     });
   });
+
+export const metaInfo = functions.https.onCall(async data => {
+  const url = data.url;
+  if (!url) {
+    throw new Error("url is required");
+  }
+
+  const axios = await import("axios");
+  const { load } = await import("cheerio");
+
+  const content = await axios.default.get(url);
+  const $ = load(content.data);
+
+  const meta = {
+    title: "",
+    description: "",
+    image: ""
+  };
+
+  $('meta[property^="og:"]').each((i, elem) => {
+    const $$ = $(elem);
+    if ($$.attr("property") === "og:title") {
+      meta.title = $$.attr("content") || "";
+    }
+    if ($$.attr("property") === "og:description") {
+      meta.description = $$.attr("content") || "";
+    }
+    if ($$.attr("property") === "og:image") {
+      meta.image = $$.attr("content") || "";
+    }
+  });
+
+  return meta;
+});

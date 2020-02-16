@@ -46,7 +46,7 @@
 import { Component, Prop, Vue, Inject } from "vue-property-decorator";
 import Bookmark from "@/models/Bookmark";
 import Tag from "@/components/Tag.vue";
-import { getFaviconUrl } from "@/util/favicon";
+import { getFaviconUrl } from "@/util/url";
 
 @Component({
   components: { Tag }
