@@ -4,6 +4,7 @@
       class="bookmark-title"
       :class="{ 'no-title': !bookmark.title, 'bookmark-link': !bookmark.title }"
     >
+      <img v-if="faviconSrc" :src="faviconSrc" />
       <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
         {{ bookmark.title || bookmark.url }}
       </a>
@@ -45,6 +46,7 @@
 import { Component, Prop, Vue, Inject } from "vue-property-decorator";
 import Bookmark from "@/models/Bookmark";
 import Tag from "@/components/Tag.vue";
+import { getFaviconUrl } from "@/util/favicon";
 
 @Component({
   components: { Tag }
@@ -54,13 +56,17 @@ export default class BookmarkElement extends Vue {
 
   @Prop({ default: () => [] }) highlightedTags!: Array<string>;
 
-  private get createdAt(): String {
+  private get createdAt(): string {
     const y = this.bookmark.createdAt.getFullYear();
     const m = this.bookmark.createdAt.getMonth() + 1;
     const d = this.bookmark.createdAt.getDate();
     const h = this.bookmark.createdAt.getHours();
     const mi = this.bookmark.createdAt.getMinutes();
     return `${y}/${m}/${d} ${h}:${mi}`;
+  }
+
+  private get faviconSrc(): string {
+    return getFaviconUrl(this.bookmark.url);
   }
 }
 </script>
@@ -71,6 +77,15 @@ export default class BookmarkElement extends Vue {
 
   div {
     margin-top: var(--spacing-small);
+  }
+}
+
+.bookmark-title {
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-right: var(--spacing-small);
   }
 }
 
