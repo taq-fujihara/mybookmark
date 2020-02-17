@@ -11,6 +11,12 @@ let unsubscribeTags: () => void;
 
 export default new Vuex.Store({
   state: {
+    app: {
+      version: process.env.VUE_APP_VERSION,
+      repository: {
+        url: process.env.VUE_APP_REPOSITORY_URL
+      }
+    },
     user: {
       id: "",
       email: "",

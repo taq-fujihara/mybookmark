@@ -28,16 +28,20 @@
           Tags
         </a>
 
-        <!-- <div class="navbar-item has-dropdown is-hoverable">
+        <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
             More
           </a>
           <div class="navbar-dropdown">
-            <a class="navbar-item">
-              Archived Bookmarks
+            <a
+              class="navbar-item"
+              :href="$store.state.app.repository.url"
+              target="_blank"
+            >
+              About
             </a>
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
