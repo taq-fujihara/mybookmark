@@ -22,23 +22,25 @@
     <div class="navbar-menu" :class="{ 'is-active': menuOpen }">
       <div class="navbar-start">
         <a class="navbar-item" @click="movePage('bookmarks')">
+          <i class="fas fa-bookmark"></i>
           Bookmarks
         </a>
         <a class="navbar-item" @click="movePage('tags')">
+          <i class="fas fa-tag"></i>
           Tags
         </a>
-
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
             More
           </a>
           <div class="navbar-dropdown">
             <a
-              class="navbar-item"
+              class="navbar-item icon-left"
               :href="$store.state.app.repository.url"
               target="_blank"
             >
-              About
+              <i class="fab fa-github"></i>
+              <span>About</span>
             </a>
           </div>
         </div>
@@ -80,6 +82,12 @@ export default class App extends Vue {
     color: #78909c;
     font-weight: bold;
     transform: translateX(-20%);
+  }
+}
+
+.navbar-item {
+  i {
+    margin-right: var(--spacing-small);
   }
 }
 </style>
