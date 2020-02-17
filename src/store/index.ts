@@ -23,6 +23,7 @@ export default new Vuex.Store({
       photoURL: ""
     },
     bookmarks: new Array<Bookmark>(),
+    fetchingBookmarks: false,
     bookmarksAllFetched: false,
     tags: {
       sort: {
@@ -45,6 +46,10 @@ export default new Vuex.Store({
   },
   actions: {
     async fetchBookmarks({ commit, state }, { filter, pagination }) {
+      // 次ページではなく全件入れ替えの場合はfetch中にしておく。
+      // 単に次ページの取得の場合は何もコントロールする必要はない。
+      state.fetchingBookmarks = !pagination;
+
       const bookmarks = await Repository.getBookmarks(
         state.user.id,
         filter,
@@ -58,6 +63,8 @@ export default new Vuex.Store({
       }
 
       state.bookmarksAllFetched = bookmarks.length === 0;
+
+      state.fetchingBookmarks = false;
     },
     loadTags({ state }, { by = "createdAt", order = "desc" }) {
       if (unsubscribeTags) {

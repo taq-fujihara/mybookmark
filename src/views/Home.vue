@@ -27,11 +27,16 @@
         <i class="fas fa-plus-square" />
         Add Bookmark...
       </a>
-      <Bookmarks
-        :bookmarks="bookmarks"
-        :highlightedTags="filter.tags"
-        @tagClick="toggleFilterTag"
-      />
+      <div
+        class="bookmarks"
+        :class="{ loading: $store.state.fetchingBookmarks }"
+      >
+        <Bookmarks
+          :bookmarks="bookmarks"
+          :highlightedTags="filter.tags"
+          @tagClick="toggleFilterTag"
+        />
+      </div>
       <div class="show-more sub-text" v-if="!$store.state.bookmarksAllFetched">
         <a @click="fetchMore">more...</a>
       </div>
@@ -141,6 +146,13 @@ export default class Home extends Vue {
 
 .selectable-tags {
   margin-top: var(--spacing-small);
+}
+
+.bookmarks {
+  &.loading {
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 
 .show-more {
